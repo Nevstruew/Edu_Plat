@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{% if form.instance.pk %}Редактировать{% else %}Создать{% endif %} урок</h1>
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label>Курс</label>
+        {{ form.course }}
+    </div>
+    <div class="mb-3">
+        <label>Название</label>
+        {{ form.title }}
+    </div>
+    <div class="mb-3">
+        <label>Содержание</label>
+        {{ form.content }}
+    </div>
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a href="{% url 'lesson_list' %}" class="btn btn-secondary">Отмена</a>
+</form>
+{% endblock %}

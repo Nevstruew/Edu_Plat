@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Все уроки</h1>
+<a href="{% url 'lesson_create' %}" class="btn btn-success mb-3">Добавить урок</a>
+<div class="row">
+{% for lesson in lessons %}
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5>{{ lesson.title }}</h5>
+                <p><small>Курс: {{ lesson.course.title }}</small></p>
+                <p>{{ lesson.content|truncatewords:30 }}</p>
+                <a href="{% url 'lesson_detail' pk=lesson.pk %}" class="btn btn-primary">Подробнее</a>
+                {% if user == lesson.created_by %}
+                    <a href="{% url 'lesson_edit' pk=lesson.pk %}" class="btn btn-outline-secondary">Редактировать</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endfor %}
+</div>
+{% endblock %}

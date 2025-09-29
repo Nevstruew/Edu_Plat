@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ lesson.title }}</h1>
+<p><strong>Курс:</strong> {{ lesson.course.title }}</p>
+<p><strong>Автор:</strong> {{ lesson.created_by.username }}</p>
+<div class="mt-3">{{ lesson.content|linebreaks }}</div>
+
+<h3>Задания</h3>
+{% for assignment in assignments %}
+    <div class="card mt-2">
+        <div class="card-body">
+            <h5>{{ assignment.title }}</h5>
+            <p>{{ assignment.description }}</p>
+        </div>
+    </div>
+{% empty %}
+    <p>Заданий пока нет.</p>
+{% endfor %}
+<a href="{% url 'lesson_list' %}" class="btn btn-secondary mt-3">← Назад к урокам</a>
+{% endblock %}
