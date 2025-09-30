@@ -4,8 +4,8 @@
 .card {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
-
-/* static/style.css */ {% endcomment %}
+ {% endcomment %}
+ 
 * {
     margin: 0;
     padding: 0;
@@ -13,10 +13,11 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
-    color: #333;
-    background-color: #f9f9f9;
+    color: #2c1810; /* тёплый тёмно-коричневый */
+    background-color: #f8f4e9; /* цвет соломы / сена */
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0L50 0L50 50L0 50Z' fill='%23e8e0d2' fill-opacity='0.3'/%3E%3C/svg%3E");
 }
 
 .container {
@@ -26,89 +27,191 @@ body {
     padding: 20px;
 }
 
+/* Шапка — деревянный забор + зелень */
 header {
-    background: #2c3e50;
-    color: white;
+    background: linear-gradient(to bottom, #8b6b45, #6b5237); /* цвет дерева */
+    color: #f9f5e8;
     padding: 1rem 0;
-}
-
-header a {
-    color: white;
-    text-decoration: none;
-    margin-right: 15px;
+    border-bottom: 4px solid #4a7c32; /* цвет травы */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
 header h1 a {
-    font-size: 1.8rem;
+    font-size: 2rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: #f9f5e8;
+    letter-spacing: 1px;
+}
+
+header h1 a::before {
+    content: "🐓🐄 ";
+}
+
+nav a {
+    color: #f9f5e8;
+    text-decoration: none;
+    margin-right: 20px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: background 0.3s;
+}
+
+nav a:hover {
+    background: rgba(255,255,255,0.15);
 }
 
 main {
-    margin: 20px 0;
+    margin: 25px 0;
 }
 
 footer {
-    background: #ecf0f1;
-    padding: 1rem 0;
+    background: #6b5237;
+    color: #f9f5e8;
+    padding: 15px 0;
     text-align: center;
-    color: #7f8c8d;
+    border-top: 2px dashed #a8946e;
+    margin-top: 40px;
 }
 
+/* Кнопки — как деревянные дощечки */
 .btn {
     display: inline-block;
-    background: #3498db;
-    color: white;
+    background: #8b6b45;
+    color: #f9f5e8;
     padding: 10px 20px;
     text-decoration: none;
-    border-radius: 5px;
+    border-radius: 6px;
     margin-top: 10px;
+    border: 2px solid #6b5237;
+    font-weight: bold;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .btn:hover {
-    background: #2980b9;
+    background: #a8946e;
+    transform: translateY(-2px);
 }
 
 .btn.secondary {
-    background: #95a5a6;
+    background: #4a7c32; /* цвет травы */
+    border-color: #3a6028;
 }
 
 .btn.secondary:hover {
-    background: #7f8c8d;
+    background: #5d9a3f;
 }
 
+/* Сетка курсов — карточки как загоны на ферме */
 .course-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
     margin-top: 20px;
 }
 
 .course-card {
     background: white;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    border-top: 4px solid #8b6b45;
+    transition: transform 0.3s;
 }
 
+.course-card:hover {
+    transform: scale(1.02);
+}
+
+.course-card h3 {
+    color: #6b5237;
+    margin-bottom: 10px;
+}
+
+.course-card p {
+    color: #2c1810;
+    margin-bottom: 15px;
+}
+
+/* Формы — как блокнот фермера */
 form p {
-    margin: 15px 0;
+    margin: 18px 0;
 }
 
 form label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
     font-weight: bold;
+    color: #6b5237;
 }
 
 form textarea {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 12px;
+    border: 2px solid #a8946e;
+    border-radius: 8px;
+    background-color: #fdfaf3;
+    font-family: inherit;
+    resize: vertical;
 }
 
+form textarea:focus {
+    outline: none;
+    border-color: #8b6b45;
+    box-shadow: 0 0 0 2px rgba(139, 107, 69, 0.2);
+}
+
+/* Отправленное решение — как заметка на доске */
 .submission-box {
-    background: #e8f4fc;
-    padding: 15px;
-    border-left: 4px solid #3498db;
-    margin: 20px 0;
+    background: #f0e6d2;
+    padding: 18px;
+    border-left: 5px solid #4a7c32;
+    margin: 25px 0;
+    border-radius: 0 8px 8px 0;
+    position: relative;
+}
+
+.submission-box::before {
+    content: "📝";
+    position: absolute;
+    left: -20px;
+    top: 5px;
+}
+
+/* Заголовки */
+h2 {
+    color: #6b5237;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 2px dotted #a8946e;
+}
+
+h3 {
+    color: #8b6b45;
+    margin: 15px 0 10px;
+}
+
+/* Мелочи для атмосферы */
+ul {
+    padding-left: 20px;
+    margin: 15px 0;
+}
+
+li {
+    margin-bottom: 8px;
+}
+
+/* Адаптивность */
+@media (max-width: 600px) {
+    .course-grid {
+        grid-template-columns: 1fr;
+    }
+    header h1 a {
+        font-size: 1.6rem;
+    }
+    nav a {
+        display: block;
+        margin: 5px 0;
+    }
 }
