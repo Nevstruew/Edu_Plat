@@ -2,8 +2,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
-from .models import Course, Lesson, Assignment
-from .forms import LessonForm
+from django.contrib import messages
+from django.utils import timezone
+from .models import Course, Lesson, Assignment, Submission
+from .forms import LessonForm, SubmissionForm
 
 def register(request):
     if request.method == 'POST':
@@ -16,15 +18,23 @@ def register(request):
         form = UserCreationForm()
     return render(request, 'registration/register.html', {'form': form})
 
-
-
 def home(request):
     courses = Course.objects.all()
     return render(request, 'home.html', {'courses': courses})
 
+# def lesson_list(request):
+#     lessons = Lesson.objects.select_related('course', 'created_by').all()
+#     return render(request, 'lessons/list.html', {'lessons': lessons})
 def lesson_list(request):
-    lessons = Lesson.objects.select_related('course', 'created_by').all()
+    try:
+        # Пробуем обычный запрос
+        lessons = Lesson.objects.select_related('course', 'created_by').all()
+    except Exception as e:
+        # Если ошибка - используем упрощенный запрос без проблемных полей
+        lessons = Lesson.objects.all()
+    
     return render(request, 'lessons/list.html', {'lessons': lessons})
+
 
 def lesson_detail(request, pk):
     lesson = get_object_or_404(Lesson, pk=pk)
@@ -58,3 +68,97 @@ def lesson_edit(request, pk):
     else:
         form = LessonForm(instance=lesson)
     return render(request, 'lessons/edit.html', {'form': form})
+
+def assignment_detail(request, assignment_id):
+    assignment = get_object_or_404(Assignment, id=assignment_id)
+    
+    # Получаем ответы пользователя (если он авторизован)
+    submissions = assignment.submissions.filter(student=request.user) if request.user.is_authenticated else []
+    
+    # Проверяем, может ли пользователь отправить ответ
+    can_submit = request.user.is_authenticated and not submissions.exists()
+    
+    return render(request, 'assignments/assignment_detail.html', {
+        'assignment': assignment,
+        'user_submission': submissions.first(),  # первый ответ пользователя
+        'can_submit': can_submit  # может ли отправить ответ
+    })
+
+@login_required
+def submit_assignment(request, assignment_id):
+    assignment = get_object_or_404(Assignment, id=assignment_id)
+    
+    # Проверяем, не отправил ли уже пользователь ответ
+    existing_submission = Submission.objects.filter(
+        assignment=assignment, 
+        student=request.user
+    ).first()
+    
+    if existing_submission:
+        messages.warning(request, 'Вы уже отправили ответ на это задание.')
+        return redirect('assignment_detail', assignment_id=assignment_id)
+    
+    if request.method == 'POST':
+        form = SubmissionForm(request.POST)
+        if form.is_valid():
+            submission = form.save(commit=False)
+            submission.assignment = assignment
+            submission.student = request.user
+            submission.save()
+            
+            messages.success(request, 'Ваш ответ успешно отправлен!')
+            return redirect('assignment_detail', assignment_id=assignment_id)
+    else:
+        form = SubmissionForm()
+    
+    return render(request, 'assignments/submit_assignment.html', {
+        'form': form,
+        'assignment': assignment
+    })
+
+@login_required
+def submission_detail(request, submission_id):
+    submission = get_object_or_404(Submission, id=submission_id)
+    
+    # Проверяем права доступа
+    is_teacher = request.user == submission.assignment.lesson.created_by
+    is_owner = request.user == submission.student
+    
+    if not (is_teacher or is_owner):
+        messages.error(request, 'У вас нет прав для просмотра этого ответа.')
+        return redirect('home')
+    
+    # Обработка оценки от преподавателя
+    if is_teacher and request.method == 'POST':
+        grade = request.POST.get('grade')
+        feedback = request.POST.get('feedback', '')
+        
+        if grade:
+            submission.grade = int(grade)
+            submission.feedback = feedback
+            submission.save()
+            messages.success(request, 'Оценка сохранена!')
+            return redirect('assignment_submissions', assignment_id=submission.assignment.id)
+        else:
+            messages.error(request, 'Пожалуйста, укажите оценку.')
+    
+    return render(request, 'assignments/submission_detail.html', {
+        'submission': submission
+    })
+
+# Для преподавателей - просмотр всех ответов на задание
+@login_required
+def assignment_submissions(request, assignment_id):
+    assignment = get_object_or_404(Assignment, id=assignment_id)
+    
+    # Проверяем, является ли пользователь создателем урока
+    if request.user != assignment.lesson.created_by:
+        messages.error(request, 'У вас нет прав для просмотра ответов на это задание.')
+        return redirect('home')
+    
+    submissions = assignment.submissions.all().order_by('-submitted_at')
+    
+    return render(request, 'assignments/assignment_submissions.html', {
+        'assignment': assignment,
+        'submissions': submissions
+    })

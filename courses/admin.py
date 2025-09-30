@@ -4,3 +4,4 @@ from .models import Course, Lesson, Assignment, Submission
 admin.site.register(Course)
 admin.site.register(Lesson)
 admin.site.register(Assignment)
+admin.site.register(Submission)

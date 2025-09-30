@@ -1,11 +1,12 @@
-{% comment %} body {
+/* {% comment %} body {
     background-color: #f8f9fa;
 }
 .card {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
- {% endcomment %}
- 
+} {% endcomment %}
+ */
+
+/* static/style.css — Тема: Животноводство и птицеводство */
 * {
     margin: 0;
     padding: 0;

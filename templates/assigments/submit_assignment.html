@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Ответ на задание: {{ assignment.title }}</h2>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Описание задания</h5>
+            <p class="card-text">{{ assignment.description }}</p>
+        </div>
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="{{ form.answer.id_for_label }}" class="form-label">Ваш ответ:</label>
+            {{ form.answer }}
+            {% if form.answer.errors %}
+                <div class="text-danger">{{ form.answer.errors }}</div>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">📤 Отправить ответ</button>
+        <a href="{% url 'assignment_detail' assignment.id %}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}

@@ -68,6 +68,10 @@ TEMPLATES = [
     },
 ]
 
+
+
+
+
 WSGI_APPLICATION = 'edu_platform.wsgi.application'
 
 

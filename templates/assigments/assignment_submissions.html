@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Ответы на задание: {{ assignment.title }}</h2>
+        <a href="{% url 'lesson_detail' assignment.lesson.pk %}" class="btn btn-outline-secondary">
+            ← Назад к уроку
+        </a>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Описание задания</h5>
+            <p class="card-text">{{ assignment.description }}</p>
+            <small class="text-muted">Всего ответов: {{ submissions.count }}</small>
+        </div>
+    </div>
+
+    {% if submissions %}
+        <div class="list-group">
+            {% for submission in submissions %}
+                <div class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">{{ submission.student.get_full_name|default:submission.student.username }}</h6>
+                        <small class="text-muted">{{ submission.submitted_at|date:"d.m.Y H:i" }}</small>
+                    </div>
+                    
+                    <p class="mb-2 mt-2">
+                        <strong>Ответ:</strong><br>
+                        {{ submission.answer|linebreaks|truncatewords:30 }}
+                    </p>
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            {% if submission.grade %}
+                                <span class="badge bg-success">Оценка: {{ submission.grade }}/100</span>
+                            {% else %}
+                                <span class="badge bg-warning">Не оценено</span>
+                            {% endif %}
+                            
+                            {% if submission.feedback %}
+                                <span class="badge bg-info">Есть комментарий</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div>
+                            <a href="{% url 'submission_detail' submission.id %}" class="btn btn-sm btn-primary">
+                                Проверить
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Пока никто не ответил на это задание.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

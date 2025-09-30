@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Ответ на задание</h2>
+        <a href="{% url 'assignment_detail' submission.assignment.id %}" class="btn btn-outline-secondary">
+            ← Назад к заданию
+        </a>
+    </div>
+
+    <!-- Информация о задании -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">{{ submission.assignment.title }}</h5>
+        </div>
+        <div class="card-body">
+            <p class="card-text">{{ submission.assignment.description }}</p>
+        </div>
+    </div>
+
+    <!-- Ответ студента -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">Ответ студента: {{ submission.student.get_full_name|default:submission.student.username }}</h6>
+                <small class="text-muted">Отправлено: {{ submission.submitted_at|date:"d.m.Y H:i" }}</small>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                {{ submission.answer|linebreaks }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Блок для преподавателя -->
+    {% if user == submission.assignment.lesson.created_by %}
+        <div class="card">
+            <div class="card-header bg-warning">
+                <h6 class="mb-0">Проверка работы (только для преподавателя)</h6>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="grade" class="form-label">Оценка (0-100)</label>
+                        <input type="number" class="form-control" id="grade" name="grade" 
+                               min="0" max="100" value="{{ submission.grade|default:'' }}"
+                               placeholder="Введите оценку">
+                    </div>
+                    <div class="mb-3">
+                        <label for="feedback" class="form-label">Комментарий к работе</label>
+                        <textarea class="form-control" id="feedback" name="feedback" 
+                                  rows="4" placeholder="Оставьте комментарий...">{{ submission.feedback|default:'' }}</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">Сохранить оценку</button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <!-- Блок для студента -->
+        <div class="card">
+            <div class="card-header bg-light">
+                <h6 class="mb-0">Результат проверки</h6>
+            </div>
+            <div class="card-body">
+                {% if submission.grade %}
+                    <div class="alert alert-success">
+                        <h6>Оценка: {{ submission.grade }}/100</h6>
+                        {% if submission.feedback %}
+                            <hr>
+                            <strong>Комментарий преподавателя:</strong>
+                            <p class="mb-0">{{ submission.feedback|linebreaks }}</p>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        Работа находится на проверке. Обычно это занимает 1-3 дня.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
