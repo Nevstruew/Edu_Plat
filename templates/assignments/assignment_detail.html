@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card mb-4">
+        <div class="card-body">
+            <h1 class="card-title">{{ assignment.title }}</h1>
+            <p class="text-muted">
+                Урок: <a href="{% url 'lesson_detail' assignment.lesson.pk %}">{{ assignment.lesson.title }}</a>
+            </p>
+            <div class="assignment-description">
+                <h5>📋 Описание задания:</h5>
+                <p>{{ assignment.description|linebreaks }}</p>
+            </div>
+        </div>
+    </div>
+
+    {% if user == assignment.lesson.created_by %}
+    <div class="teacher-section mt-4">
+        <div class="card border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">👨‍🏫 Панель преподавателя</h5>
+            </div>
+            <div class="card-body">
+                <p>Просмотреть все ответы студентов на это задание:</p>
+                <a href="{% url 'assignment_submissions' assignment.id %}" class="btn btn-warning">
+                    📊 Просмотреть ответы ({{ assignment.submissions.count }})
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="submission-section">
+        <h3>💬 Ваш ответ</h3>
+        
+        {% if user.is_authenticated %}
+            {% if user_submission %}
+                <div class="alert alert-info">
+                    <h5>✅ Ваш ответ отправлен</h5>
+                    <p><strong>Статус:</strong> 
+                        {% if user_submission.grade %}
+                            Оценено ({{ user_submission.grade }}/100)
+                        {% else %}
+                            ⏳ На проверке
+                        {% endif %}
+                    </p>
+                    <a href="{% url 'submission_detail' user_submission.id %}" class="btn btn-outline-primary">
+                        Посмотреть свой ответ
+                    </a>
+                </div>
+            {% elif can_submit %}
+                <div class="d-grid gap-2">
+                    <a href="{% url 'submit_assignment' assignment.id %}" class="btn btn-success btn-lg">
+                        ✏️ Ответить на задание
+                    </a>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-warning">
+                <a href="{% url 'login' %}" class="alert-link">Войдите</a>, чтобы ответить на задание.
+            </div>
+        {% endif %}
+    </div>
+
+    <a href="{% url 'lesson_detail' assignment.lesson.pk %}" class="btn btn-secondary mt-3">
+        ← Назад к уроку
+    </a>
+</div>
+{% endblock %}

@@ -1,9 +1,39 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
-<h2>Вход</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Войти</button>
-</form>
+<div class="login-page">
+    <div class="login-container">
+        <div class="login-logo">EduPlatform</div>
+        <div class="login-subtitle">Вход в систему</div>
+        
+        <form class="login-form" method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" placeholder="Введите ваш username">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Введите ваш пароль">
+            </div>
+            
+            {% if form.errors %}
+            <div class="alert alert-warning">
+                Неправильный username или пароль.
+            </div>
+            {% endif %}
+            
+            <button type="submit" class="login-btn">Войти</button>
+        </form>
+        
+        <div class="login-divider"></div>
+        
+        <div class="register-link">
+            <a href="{% url 'register' %}">Регистрация</a>
+        </div>
+    </div>
+</div>
 {% endblock %}

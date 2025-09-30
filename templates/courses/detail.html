@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>{{ course.title }}</h1>
+    <p>{{ course.description }}</p>
+
+    <h2>Уроки курса</h2>
+    
+    {% if lessons %}
+        <div class="row">
+            {% for lesson in lessons %}
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ lesson.title }}</h5>
+                        <p class="card-text">{{ lesson.content|truncatewords:30 }}</p>
+                        <a href="{% url 'lesson_detail' pk=lesson.pk %}" class="btn btn-primary">
+                            Подробнее
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            В этом курсе пока нет уроков.
+        </div>
+    {% endif %}
+
+    <a href="{% url 'home' %}" class="btn btn-secondary mt-3">← Назад к курсам</a>
+</div>
+{% endblock %}

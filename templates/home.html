@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1>Курсы</h1>
-<div class="row">
-{% for course in courses %}
-    <div class="col-md-4 mb-4">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">{{ course.title }}</h5>
-                <p class="card-text">{{ course.description|truncatewords:20 }}</p>
-                <a href="{% url 'lesson_list' %}" class="btn btn-outline-primary">Уроки</a>
-            </div>
-        </div>
+
+<div class="uniform-grid">
+    {% for course in courses %}
+    <div class="uniform-card">
+        <h3>{{ course.title }}</h3>
+        <p>{{ course.description|truncatewords:20 }}</p>
+        <a href="{% url 'course_detail' pk=course.pk %}" class="btn">Уроки</a>
+        <small class="text-muted d-block mt-2">
+            Уроков: {{ course.lessons.count }}
+        </small>
     </div>
-{% endfor %}
+    {% endfor %}
 </div>
 {% endblock %}

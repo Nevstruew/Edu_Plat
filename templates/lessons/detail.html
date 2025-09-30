@@ -1,20 +1,102 @@
 {% extends 'base.html' %}
-{% block content %}
-<h1>{{ lesson.title }}</h1>
-<p><strong>Курс:</strong> {{ lesson.course.title }}</p>
-<p><strong>Автор:</strong> {{ lesson.created_by.username }}</p>
-<div class="mt-3">{{ lesson.content|linebreaks }}</div>
 
-<h3>Задания</h3>
-{% for assignment in assignments %}
-    <div class="card mt-2">
+{% block content %}
+<div class="container mt-4">
+    <div class="card mb-4">
         <div class="card-body">
-            <h5>{{ assignment.title }}</h5>
-            <p>{{ assignment.description }}</p>
+            <h1 class="card-title">{{ lesson.title }}</h1>
+            <p class="text-muted">Курс: {{ lesson.course.title }}</p>
+            <div class="lesson-content">
+                {{ lesson.content|linebreaks }}
+            </div>
         </div>
     </div>
-{% empty %}
-    <p>Заданий пока нет.</p>
-{% endfor %}
-<a href="{% url 'lesson_list' %}" class="btn btn-secondary mt-3">← Назад к урокам</a>
+
+    <!-- БЛОК ЗАДАНИЙ -->
+    <div class="assignments-section">
+        <h2>📝 Задания этого урока</h2>
+        
+        {% if assignments %}
+            <div class="row">
+                {% for assignment in assignments %}
+                <div class="col-md-6 mb-3">
+                    <div class="card assignment-card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ assignment.title }}</h5>
+                            <p class="card-text">{{ assignment.description|truncatewords:20 }}</p>
+                            
+                            <!-- Кнопки для студентов -->
+                            {% with user_submission=assignment.submissions.all|first %}
+                            
+                            {% if user.is_authenticated %}
+                                <!-- ПРЕПОДАВАТЕЛЬ не видит кнопок ответа -->
+                                {% if user == lesson.created_by %}
+                                    <!-- Пусто - преподаватель просто видит задания без кнопок -->
+                                
+                                <!-- СТУДЕНТ видит кнопки ответа -->
+                                {% else %}
+                                    {% if user_submission and user_submission.student == user %}
+                                        <div class="alert alert-success p-2">
+                                            <small>✅ Ответ отправлен</small>
+                                            {% if user_submission.grade %}
+                                                <br><small>Оценка: {{ user_submission.grade }}/100</small>
+                                            {% endif %}
+                                        </div>
+                                        <a href="{% url 'submission_detail' user_submission.id %}" 
+                                           class="btn btn-outline-primary btn-sm">
+                                            Посмотреть ответ
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'assignment_detail' assignment.id %}" 
+                                           class="btn btn-success btn-sm">
+                                            ✏️ Ответить на задание
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+                                
+                            {% else %}
+                                <!-- НЕАВТОРИЗОВАННЫЙ пользователь -->
+                                <a href="{% url 'login' %}" class="btn btn-warning btn-sm">
+                                    Войдите чтобы ответить
+                                </a>
+                            {% endif %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                В этом уроке пока нет заданий.
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- БЛОК ДЛЯ ПРЕПОДАВАТЕЛЯ -->
+    {% if user == lesson.created_by %}
+    <div class="teacher-section mt-4">
+        <div class="card border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">👨‍🏫 Управление уроком</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex gap-2 flex-wrap">
+                    {% for assignment in assignments %}
+                    <a href="{% url 'assignment_submissions' assignment.id %}" 
+                       class="btn btn-warning">
+                        📊 Ответы: {{ assignment.title }} ({{ assignment.submissions.count }})
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- КНОПКА НАЗАД -->
+    <div class="mt-3">
+        <a href="{% url 'lesson_list' %}" class="btn btn-secondary">← Назад к урокам</a>
+    </div>
+</div>
 {% endblock %}

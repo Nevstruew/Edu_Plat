@@ -1,11 +1,14 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
-from django.utils import timezone
 from .models import Course, Lesson, Assignment, Submission
 from .forms import LessonForm, SubmissionForm
+
+# Проверка является ли пользователь преподавателем
+def is_teacher(user):
+    return user.is_staff or user.is_superuser
 
 def register(request):
     if request.method == 'POST':
@@ -22,19 +25,21 @@ def home(request):
     courses = Course.objects.all()
     return render(request, 'home.html', {'courses': courses})
 
-# def lesson_list(request):
-#     lessons = Lesson.objects.select_related('course', 'created_by').all()
-#     return render(request, 'lessons/list.html', {'lessons': lessons})
+def course_detail(request, pk):
+    course = get_object_or_404(Course, pk=pk)
+    lessons = course.lessons.all().order_by('title')
+    return render(request, 'courses/detail.html', {
+        'course': course,
+        'lessons': lessons
+    })
+
 def lesson_list(request):
     try:
-        # Пробуем обычный запрос
-        lessons = Lesson.objects.select_related('course', 'created_by').all()
+        lessons = Lesson.objects.select_related('course', 'created_by').all().order_by('course__title', 'title')
     except Exception as e:
-        # Если ошибка - используем упрощенный запрос без проблемных полей
-        lessons = Lesson.objects.all()
+        lessons = Lesson.objects.all().order_by('course__title', 'title')
     
     return render(request, 'lessons/list.html', {'lessons': lessons})
-
 
 def lesson_detail(request, pk):
     lesson = get_object_or_404(Lesson, pk=pk)
@@ -45,6 +50,7 @@ def lesson_detail(request, pk):
     })
 
 @login_required
+@user_passes_test(is_teacher)
 def lesson_create(request):
     if request.method == 'POST':
         form = LessonForm(request.POST)
@@ -58,6 +64,7 @@ def lesson_create(request):
     return render(request, 'lessons/create.html', {'form': form})
 
 @login_required
+@user_passes_test(is_teacher)
 def lesson_edit(request, pk):
     lesson = get_object_or_404(Lesson, pk=pk, created_by=request.user)
     if request.method == 'POST':
@@ -72,23 +79,20 @@ def lesson_edit(request, pk):
 def assignment_detail(request, assignment_id):
     assignment = get_object_or_404(Assignment, id=assignment_id)
     
-    # Получаем ответы пользователя (если он авторизован)
     submissions = assignment.submissions.filter(student=request.user) if request.user.is_authenticated else []
     
-    # Проверяем, может ли пользователь отправить ответ
     can_submit = request.user.is_authenticated and not submissions.exists()
     
     return render(request, 'assignments/assignment_detail.html', {
         'assignment': assignment,
-        'user_submission': submissions.first(),  # первый ответ пользователя
-        'can_submit': can_submit  # может ли отправить ответ
+        'user_submission': submissions.first(), 
+        'can_submit': can_submit 
     })
 
 @login_required
 def submit_assignment(request, assignment_id):
     assignment = get_object_or_404(Assignment, id=assignment_id)
     
-    # Проверяем, не отправил ли уже пользователь ответ
     existing_submission = Submission.objects.filter(
         assignment=assignment, 
         student=request.user
@@ -120,7 +124,6 @@ def submit_assignment(request, assignment_id):
 def submission_detail(request, submission_id):
     submission = get_object_or_404(Submission, id=submission_id)
     
-    # Проверяем права доступа
     is_teacher = request.user == submission.assignment.lesson.created_by
     is_owner = request.user == submission.student
     
@@ -128,7 +131,6 @@ def submission_detail(request, submission_id):
         messages.error(request, 'У вас нет прав для просмотра этого ответа.')
         return redirect('home')
     
-    # Обработка оценки от преподавателя
     if is_teacher and request.method == 'POST':
         grade = request.POST.get('grade')
         feedback = request.POST.get('feedback', '')
@@ -146,12 +148,10 @@ def submission_detail(request, submission_id):
         'submission': submission
     })
 
-# Для преподавателей - просмотр всех ответов на задание
 @login_required
 def assignment_submissions(request, assignment_id):
     assignment = get_object_or_404(Assignment, id=assignment_id)
     
-    # Проверяем, является ли пользователь создателем урока
     if request.user != assignment.lesson.created_by:
         messages.error(request, 'У вас нет прав для просмотра ответов на это задание.')
         return redirect('home')
@@ -162,3 +162,4 @@ def assignment_submissions(request, assignment_id):
         'assignment': assignment,
         'submissions': submissions
     })
+    

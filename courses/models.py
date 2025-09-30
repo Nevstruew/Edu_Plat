@@ -10,14 +10,16 @@ class Course(models.Model):
         return self.title
 
 class Lesson(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='lessons')
     title = models.CharField(max_length=200)
     content = models.TextField()
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
         return self.title
+
+    
 
 class Assignment(models.Model):
     title = models.CharField(max_length=200)
