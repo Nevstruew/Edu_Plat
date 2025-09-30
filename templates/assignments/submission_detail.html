@@ -9,7 +9,6 @@
         </a>
     </div>
 
-    <!-- Информация о задании -->
     <div class="card mb-4">
         <div class="card-header">
             <h5 class="mb-0">{{ submission.assignment.title }}</h5>
@@ -19,7 +18,6 @@
         </div>
     </div>
 
-    <!-- Ответ студента -->
     <div class="card mb-4">
         <div class="card-header bg-light">
             <div class="d-flex justify-content-between align-items-center">
@@ -34,7 +32,6 @@
         </div>
     </div>
 
-    <!-- Блок для преподавателя -->
     {% if user == submission.assignment.lesson.created_by %}
         <div class="card">
             <div class="card-header bg-warning">

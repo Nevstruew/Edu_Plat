@@ -12,7 +12,6 @@
         </div>
     </div>
 
-    <!-- БЛОК ЗАДАНИЙ -->
     <div class="assignments-section">
         <h2>📝 Задания этого урока</h2>
         
@@ -24,12 +23,9 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ assignment.title }}</h5>
                             <p class="card-text">{{ assignment.description|truncatewords:20 }}</p>
-                            
-                            <!-- Кнопки для студентов -->
-                            {% with user_submission=assignment.submissions.all|first %}
-                            
+
+                            {% with user_submission=assignment.submissions.all|first %}                          
                             {% if user.is_authenticated %}
-                                <!-- ПРЕПОДАВАТЕЛЬ не видит кнопок ответа -->
                                 {% if user == lesson.created_by %}
                                     <!-- Пусто - преподаватель просто видит задания без кнопок -->
                                 
@@ -55,7 +51,6 @@
                                 {% endif %}
                                 
                             {% else %}
-                                <!-- НЕАВТОРИЗОВАННЫЙ пользователь -->
                                 <a href="{% url 'login' %}" class="btn btn-warning btn-sm">
                                     Войдите чтобы ответить
                                 </a>
@@ -73,7 +68,6 @@
         {% endif %}
     </div>
 
-    <!-- БЛОК ДЛЯ ПРЕПОДАВАТЕЛЯ -->
     {% if user == lesson.created_by %}
     <div class="teacher-section mt-4">
         <div class="card border-warning">
@@ -94,7 +88,6 @@
     </div>
     {% endif %}
 
-    <!-- КНОПКА НАЗАД -->
     <div class="mt-3">
         <a href="{% url 'lesson_list' %}" class="btn btn-secondary">← Назад к урокам</a>
     </div>

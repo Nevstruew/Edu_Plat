@@ -13,8 +13,7 @@
             <div class="navbar-nav ms-auto">
                 {% if user.is_authenticated %}
                     <span class="navbar-text me-3">Привет, {{ user.username }}!</span>
-                    
-                    <!-- Кнопка "Добавить урок" только для преподавателей -->
+
                     {% if user.is_staff or user.is_superuser %}
                     <a class="nav-link btn-add-lesson" href="{% url 'lesson_create' %}">Добавить урок</a>
                     {% endif %}

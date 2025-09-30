@@ -52,7 +52,6 @@ header h1 a::after {
     content: " 🌾";
 }
 
-/* Навигация */
 nav {
     margin-top: 10px;
 }
@@ -74,13 +73,11 @@ nav a:hover {
     transform: translateY(-2px);
 }
 
-/* Основной контент */
 main {
     margin: 30px 0;
     min-height: 60vh;
 }
 
-/* Подвал */
 footer {
     background: #5d4037;
     color: #ffecb3;
@@ -98,7 +95,6 @@ footer::before {
     font-weight: bold;
 }
 
-/* Кнопки в фермерском стиле */
 .btn {
     display: inline-block;
     background: linear-gradient(to bottom, #ffb300, #ff8f00);
@@ -131,7 +127,6 @@ footer::before {
     background: linear-gradient(to bottom, #66bb6a, #4caf50);
 }
 
-/* Стиль для кнопки Выйти в навигации */
 .btn-logout {
     display: inline-block;
     background: linear-gradient(to bottom, #ff6b6b, #e53935);
@@ -169,7 +164,6 @@ footer::before {
     box-shadow: 0 2px 4px rgba(229, 57, 53, 0.3);
 }
 
-/* Стиль для кнопки Добавить урок в навигации */
 .nav-link.btn-add-lesson {
     background: linear-gradient(to bottom, #4caf50, #388e3c);
     color: white !important;
@@ -195,7 +189,6 @@ footer::before {
     color: white !important;
 }
 
-/* УНИВЕРСАЛЬНЫЕ КАРТОЧКИ */
 .uniform-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -255,7 +248,6 @@ footer::before {
     margin-top: auto;
 }
 
-/* Блоки с ответами */
 .submission-box {
     background: linear-gradient(135deg, #e8f5e8, #f1f8e9);
     padding: 20px;
@@ -279,7 +271,6 @@ footer::before {
     font-weight: bold;
 }
 
-/* Заголовки */
 h2 {
     color: #5d4033;
     margin-bottom: 25px;
@@ -303,7 +294,6 @@ h3 {
     font-size: 1.5rem;
 }
 
-/* Списки */
 ul {
     padding-left: 25px;
     margin: 20px 0;
@@ -319,7 +309,6 @@ li::before {
     margin-right: 8px;
 }
 
-/* Уведомления */
 .alert {
     padding: 15px 20px;
     border-radius: 10px;
@@ -340,7 +329,6 @@ li::before {
     color: #ef6c00;
 }
 
-/* СТИЛИ ДЛЯ СТРАНИЦЫ ВХОДА */
 .login-page {
     min-height: 100vh;
     display: flex;
@@ -388,7 +376,6 @@ li::before {
     gap: 20px;
 }
 
-/* ЕДИНСТВЕННОЕ ОПРЕДЕЛЕНИЕ form-group */
 .form-group {
     margin-bottom: 25px;
     text-align: left;
@@ -403,7 +390,6 @@ li::before {
     font-family: 'Comic Neue', cursive;
 }
 
-/* ЕДИНСТВЕННОЕ ОПРЕДЕЛЕНИЕ полей форм */
 .form-group input[type="text"],
 .form-group input[type="password"],
 .form-group input[type="email"],
@@ -485,7 +471,6 @@ form select:focus {
     text-decoration: underline;
 }
 
-/* Стили для форм создания/редактирования */
 .form-container {
     max-width: 800px;
     margin: 0 auto;
@@ -540,7 +525,6 @@ form select:focus {
     font-family: 'Comic Neue', cursive;
 }
 
-/* Специфические стили для селекта */
 .form-group select {
     appearance: none;
     background: #fffde7;
@@ -551,7 +535,6 @@ form select:focus {
     background: #fff;
 }
 
-/* Диагностика */
 .diagnostics {
     background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
     border: 2px solid #5d4037;
@@ -570,7 +553,6 @@ form select:focus {
     color: #3e2723;
 }
 
-/* Адаптивность */
 @media (max-width: 768px) {
     .uniform-grid {
         grid-template-columns: 1fr;
@@ -662,26 +644,26 @@ form select:focus {
 .login-form {
     display: flex;
     flex-direction: column;
-    gap: 15px; /* Уменьшено с 20px до 15px */
+    gap: 15px;
 }
 
 .form-group {
-    margin-bottom: 15px; /* Уменьшено с 25px до 15px */
+    margin-bottom: 15px; 
 }
 
 .password-requirements {
-    margin-top: 10px; /* Уменьшено с 15px до 10px */
+    margin-top: 10px; 
 }
 
 .password-requirements .card-body {
-    padding: 12px; /* Уменьшено с 15px до 12px */
+    padding: 12px; 
 }
 
 .password-requirements h6 {
-    margin-bottom: 8px; /* Уменьшено с 10px до 8px */
+    margin-bottom: 8px; 
 }
 
 .password-requirements li {
-    margin-bottom: 3px; /* Уменьшено с 5px до 3px */
-    font-size: 0.85rem; /* Чуть уменьшен шрифт */
+    margin-bottom: 3px;
+    font-size: 0.85rem; 
 }

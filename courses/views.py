@@ -6,7 +6,6 @@ from django.contrib import messages
 from .models import Course, Lesson, Assignment, Submission
 from .forms import LessonForm, SubmissionForm
 
-# Проверка является ли пользователь преподавателем
 def is_teacher(user):
     return user.is_staff or user.is_superuser
 
